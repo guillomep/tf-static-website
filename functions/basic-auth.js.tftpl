@@ -1,0 +1,22 @@
+function handler(event) {
+    // Get the authentication data
+    const authorizationHeader = event.request.headers.authorization;
+    // Set the preferred authentication
+    const preferredAuthorization = "Basic ${base64encode(basic_auth_creds)}";
+    // If the authentication header is matching the preferred authentication
+    // then return the request to the origin
+    if (authorizationHeader !== undefined && authorizationHeader.value === preferredAuthorization) {
+        return event.request;
+    }
+    // If the authentication header is not matching the preferred authentication
+    // then return a 401 response to the client
+    // this will trigger the browser to show the authentication dialog
+    return {
+        statusCode: 401,
+        statusDescription: "Unauthorized",
+        headers: {
+            "www-authenticate": { value: 'Basic realm="Connect"' },
+        },
+    };
+}
+
